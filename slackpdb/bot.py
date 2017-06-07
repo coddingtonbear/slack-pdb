@@ -114,6 +114,10 @@ class SlackpdbBot(SlackClient):
         if message.get('type') != 'message':
             return False
 
+        if message.get('channel') == 'C4MN906RY':
+            import pdb
+            pdb.set_trace()
+
         if message.get('edited'):
             logger.warning(
                 "Ignoring edited message: %s",
@@ -144,8 +148,8 @@ class SlackpdbBot(SlackClient):
             return False
 
         if (
-            prefix.strip(':').strip('@').strip('<').strip('>')
-            in (
+            prefix.strip(':').strip('<').strip('>').strip('@')
+            not in (
                 self.token_info['user'],
                 self.token_info['user_id'],
             )
