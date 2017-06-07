@@ -54,10 +54,11 @@ class SlackpdbBot(SlackClient):
                     )
                 ),
                 (
-                    u"_Please prefix debugger commands with either '!' or "
-                    u"'%s:'. For pdb help, say '!help'; for a list of "
-                    u"slackpdb-specific commands, say '!!help'._" % (
-                        self.token_info['user'],
+                    u"_Please prefix debugger commands with '@{username}'. "
+                    u"For pdb help, say '@{username} help'; for a list of "
+                    u"slackpdb-specific commands, say '@{username} "
+                    u"!help'._".format(
+                        username=self.token_info['user'],
                     )
                 )
             ],
@@ -262,16 +263,17 @@ class SlackpdbBot(SlackClient):
         elif cmd.startswith("!help"):
             available_commands = textwrap.dedent(u"""
                 Available Commands:
-                * !!allow NICKNAME
+                * @{username} allow NICKNAME
                   Add NICKNAME to the list of users that are allowed to
                   interact with the debugger. Current value: {limit_access_to}.
 
-                * !!forbid NICKNAME
+                * @{username} forbid NICKNAME
                   Remove NICKNAME from the list of users that are allowed
                   to interact with the debugger.
             """.format(
+                username=self.token_info['user'],
                 limit_access_to=self.limit_access_to,
-            ))
+            )).strip()
             self.send_channel_message(
                 available_commands,
             )
