@@ -43,7 +43,6 @@ setup(
     packages=find_packages(),
     install_requires=requirements,
     tests_require=['tox', 'pytest', 'mock'],
-    cmdclass = {'test': Tox},
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
