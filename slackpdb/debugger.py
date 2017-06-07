@@ -125,13 +125,14 @@ def set_trace(*args, **kwargs):
     We catch all the possible exceptions from pdb and cleanup.
 
     """
-    debugger = Slackpdb(*args, **kwargs)
     if not args and os.environ.get('SLACK_API_TOKEN'):
         args = (os.environ.get('SLACK_API_TOKEN'), )
     if not args and kwargs.get('django', False):
         from django.conf import settings
         args = (settings.SLACK_API_TOKEN, )
         kwargs.pop('django')
+
+    debugger = Slackpdb(*args, **kwargs)
 
     try:
         slack_feeder = Thread(

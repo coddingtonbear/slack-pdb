@@ -33,7 +33,7 @@ if sys.version_info < (2, 7):
 
 setup(
     name="slack-pdb",
-    version="2.0.0",
+    version="2.0.1",
     description=(
         "Collaboratively debug your Python application in Slack"
     ),
