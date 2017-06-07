@@ -1,13 +1,15 @@
+# -*- coding: utf-8 -*-
 import logging
 
-import ircpdb
+import slackpdb
 
 logging.basicConfig(level=logging.DEBUG)
 
 
 def test():
-    ircpdb.set_trace(
-        limit_access_to='coddingtonbear'
+    slackpdb.set_trace(
+        u'xoxb-194996974823-UGj992QUwAtJ3hwQSHnx2M6B',
+        channel=u'#что_ты_хочешь'
     )
 
 

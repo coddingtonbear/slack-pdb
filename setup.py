@@ -3,7 +3,6 @@ import os
 import sys
 import uuid
 from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
 
 
 requirements_path = os.path.join(
@@ -32,27 +31,15 @@ if sys.version_info < (2, 7):
     requirements.append('importlib>=1.0.1')
 
 
-class Tox(TestCommand):
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        import tox
-        errno = tox.cmdline(self.test_args)
-        sys.exit(errno)
-
-
 setup(
-    name="ircpdb",
-    version="1.8.1",
+    name="slack-pdb",
+    version="2.0.0",
     description=(
-        "Remotely and collaboratively debug your Python application via IRC"
+        "Collaboratively debug your Python application in Slack"
     ),
     author="Adam Coddington",
     author_email="me@adamcoddington.net",
-    url="http://github.com/coddingtonbear/ircpdb",
+    url="http://github.com/coddingtonbear/slack-pdb",
     packages=find_packages(),
     install_requires=requirements,
     tests_require=['tox', 'pytest', 'mock'],

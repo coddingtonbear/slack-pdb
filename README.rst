@@ -1,49 +1,27 @@
-ircpdb - Remotely and collaboratively debug your Python application via an IRC channel
-======================================================================================
+slackpdb - Remotely and collaboratively debug your Python application via a Slack channel
+=========================================================================================
 
-.. image:: https://travis-ci.org/coddingtonbear/ircpdb.svg?branch=master
-    :target: https://travis-ci.org/coddingtonbear/ircpdb
+.. image:: https://travis-ci.org/coddingtonbear/slackpdb.svg?branch=master
+    :target: https://travis-ci.org/coddingtonbear/slackpdb
 
-.. image:: https://badge.fury.io/py/ircpdb.svg
-    :target: http://badge.fury.io/py/ircpdb
-
-Ircpdb is an adaptation of rpdb that, instead of opening a port and
-allowing you to debug over telnet, connects to a configurable IRC
+Slackpdb is an adaptation of rpdb that, instead of opening a port and
+allowing you to debug over telnet, connects to a configurable Slack
 channel so you can collaboratively debug an application remotely.
 
 .. code-block::
 
-    import ircpdb
-    ircpdb.set_trace(
+    import slackpdb
+    slackpdb.set_trace(
+        token="<your slack token>",
         channel="#debugger_hangout",
-        limit_access_to=['mynickname'], # List of nicknames that are allowed access
     )
 
-By default, ircpdb will select a nickname on its own and enter the channel
-you specify on Freenode, but you can feel free to configure ircpdb to
-connect anywhere:
-
-.. code-block::
-
-    import ircpdb
-    ircpdb.set_trace(
-        channel="#debugger_hangout",
-        nickname='im_a_debugger',
-        server='irc.mycompany.org',
-        limit_access_to=['mynickname', 'someothernickname', 'mybestfriend'],
-        port=6667,
-        ssl=True,
-    )  # See 'Options' below for descriptions of the above arguments
-
 Upon reaching ``set_trace()``, your script will "hang" and the only way to get
-it to continue is to access ircpdb by talking to the user that connected to the
+it to continue is to access slackpdb by talking to the user that connected to the
 above IRC channel.
 
-By default, the debugger will enter the channel you've specified using a
-username starting with the hostname of the computer from which it was
-launched (in the following example: 'MyHostname').  To interact with
-the debugger, just send messages in the channel prefixed with "MyHostname:",
-or simply "!".
+To interact with the debugger, just send messages in the channel prefixed
+with the username it announces itself as, or simply "!".
 
 For example, the following two commands are equivalent, and each will
 display the pdb help screen (be sure to replace 'MyHostname' with whatever
@@ -53,108 +31,31 @@ username the bot selected)::
 
 ::
 
-    MyHostname: help
+    slackpdb: help
 
 Installation
 ------------
 
 From ``pip``::
 
-    pip install ircpdb
+    pip install slackpdb
 
 Options
 -------
 
-You can either specify the server to connect to using a series of keyword
-arguments, or using a single URI string described below in `URI Format`.
-If you happen to specify connection parameters using both a URI and
-keyword arguments, the keyword arguments will take priority.
-
-* ``uri``: A 'URI' specifying the IRC server and channel to connect to.  If you
-  specify a URI, there is no need to specify the below parameters, but if you
-  do specify any other parameters, they will override settings specified in the URI.
-  See `URI Format` below for more information.
-* ``channel`` (**REQUIRED IF NOT USING URI**): The name of the channel (starting with ``#``)
-  to connect to on the IRC server.
-* ``limit_access_to`` (**REQUIRED IF NOT USING URI**): A list of nicknames that
-  are allowed to interact with the debugger.  When specified in a URI, this should
-  be a comma-separated list of nicknames.
-* ``nickname``: The nickname to use when connecting. Note that an alternate
-  name will be selected if this name is already in use. Defaults to using
-  the hostname of the machine on which the debugger was executed.
-* ``server``: The hostname or IP address of the IRC server.
-  Default: ``chat.freenode.net``.
-* ``port``: The port number of the IRC server.  Default: ``6697``.
-* ``ssl``: Use SSL when connecting to the IRC server?  Default: ``True``.
-* ``password``: The server password (if necessary) for the IRC server.
-  Default: ``None``.
-* ``message_wait_seconds``: The number of seconds that the bot should
-  wait between sending messages on IRC.  Many servers, including Freenode,
-  will kick clients that send too many messages in too short of a time
-  frame.  Default: ``0.8`` seconds.
-* ``paste_minimum_response_length``: Try to post messages this length
-  or longer to a `gist <http://gist.github.com/>`_ rather than sending
-  each line individually via IRC.  This is a useful parameter to use
-  if you happen to be connected to a server having very austere
-  limits on the number of lines a client can send per minute.
-  Default: ``20`` lines.
+* ``token``: A token to use for connecting to Slack; if you do not have one,
+  you can quickly generate one at https://my.slack.com/services/new/bot.  Note
+  that if this is not specified, it may be gathered from the SLACK_API_TOKEN
+  environment variable, or, if the ``django`` option is set to ``True``, from
+  a Django setting named ``SLACK_API_TOKEN``.
+* ``channel`` (**REQUIRED**): The name of the channel (starting with ``#``).
+* ``limit_access_to``: A list of nicknames that
+  are allowed to interact with the debugger.
 * ``activation_timeout``: Wait maximally this number of seconds for
   somebody to interact with the debugger in the channel before
   disconnecting and continuing execution.  Default: ``60`` seconds.
-
-Default Settings via Environment Variable
------------------------------------------
-
-You can specify default connection parameters by setting the ``DEFAULT_IRCPDB_URI``
-environment variable with a URI matching the format described below in `URI Format`.
-
-URI Format
-----------
-
-Example::
-
-    irc+ssl://botnickname@ircserverhostname:6667/#mychannel?limit_access_to=mynickname
-
-This is a shortcut format to use for specifying IRC connection parameters; roughly
-this follows the following format::
-
-    irc[+<ssl?>]://[[<nickname>][:<password>]@]<hostname>[:<port>]/<channel>
-
-All other parameters mentioned in `Options` above can be specified as query string arguments.
-
-Note that this diverges from a standard URI in that you should include the ``#``
-characters at the beginning of your channel name **unescaped**.
-
-Use in Django Templates
------------------------
-
-In your `settings.py`, add `ircpbd.django` to your installed apps::
-
-    INSTALLED_APPS = [
-        # Other apps
-        # ...
-        'ircpdb.django',
-    ]
-
-Within the template you'd like to add a debugger trace to, load the
-`ircpdb` template tags by adding the following to the top of the template::
-
-    {% load ircpdb %}
-
-And, where you'd like to inject the ircpdb trace::
-
-    {% set_trace channel='#my_channel' limit_access_to='coddingtonbear' %}
-
-.. note::
-
-   Although most parameters are unchanged between when invoking ``set_trace``
-   in python and invoking ``set_trace`` from within a template, the parameter
-   ``limit_access_to`` should be a comma-separated list of usernames rather
-   than a list literal when using ``set_trace`` in a template (like above).
-
-Next time you render this template (probably by going to a view that
-uses it), rendering will be halted at the point where you've placed your trace,
-and the ircpdb bot will appear in your channel.
+* ``django``: (Default: ``False``) Attempt to gather Slack API token from
+  a django setting named ``SLACK_API_TOKEN`` if otherwise unspecified.
 
 Security Disclaimer
 -------------------
@@ -163,14 +64,6 @@ The way that this library works is **inherently** **dangerous**; given that
 you're able to execute arbitrary Python code from within your debugger,
 it is strongly recommended that you take all reasonable measures to ensure
 that you control who are able to execute debugger commands.
-
-To limit your risk as much as possible, you should consider taking the
-following steps:
-
-* Always use an SSL-capable IRC server (read: leave the ``ssl`` argument
-  set to it's default: ``True``).
-* Connect to an IRC server you or a company you work for owns rather than
-  Freenode (the default).
 
 Just to make absolutely sure this is clear: you're both responsible for
 determining what level of risk you are comfortable with, and for taking
