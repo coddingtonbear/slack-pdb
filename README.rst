@@ -45,9 +45,9 @@ Options
 
 * ``token``: A token to use for connecting to Slack; if you do not have one,
   you can quickly generate one at https://my.slack.com/services/new/bot.  Note
-  that if this is not specified, it may be gathered from the SLACK_API_TOKEN
-  environment variable, or, if the ``django`` option is set to ``True``, from
-  a Django setting named ``SLACK_API_TOKEN``.
+  that if this is not specified, it may be gathered from the
+  ``SLACKPDB_API_TOKEN`` environment variable, or, if the ``django`` option is
+  set to ``True``, from a Django setting named ``SLACKPDB_API_TOKEN``.
 * ``channel`` (**REQUIRED**): The name of the channel (starting with ``#``).
 * ``limit_access_to``: A list of nicknames that
   are allowed to interact with the debugger.
@@ -55,7 +55,7 @@ Options
   somebody to interact with the debugger in the channel before
   disconnecting and continuing execution.  Default: ``60`` seconds.
 * ``django``: (Default: ``False``) Attempt to gather Slack API token from
-  a django setting named ``SLACK_API_TOKEN`` if otherwise unspecified.
+  a django setting named ``SLACKPDB_API_TOKEN`` if otherwise unspecified.
 
 Security Disclaimer
 -------------------
